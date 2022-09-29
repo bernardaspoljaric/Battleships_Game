@@ -21,6 +21,7 @@ public class PlayerBoard : MonoBehaviour
     private List<Ship> ship;
     // placeholder for tiles that my be used
     private List<Vector2Int> usedTiles = new List<Vector2Int>();
+    private List<Vector2Int> affectedTiles = new List<Vector2Int>();
     private Vector3 rotation = Vector3.zero;
 
     [Header("Player")]
@@ -61,15 +62,15 @@ public class PlayerBoard : MonoBehaviour
         ship = new List<Ship>();
 
         ship.Add(SpawnSingleShip(ShipType.Battleship, player));
-        ship.Add(SpawnSingleShip(ShipType.Cruiser, player));
-        ship.Add(SpawnSingleShip(ShipType.Destroyer, player));
-        ship.Add(SpawnSingleShip(ShipType.Frigate, player));
+        //ship.Add(SpawnSingleShip(ShipType.Cruiser, player));
+        //ship.Add(SpawnSingleShip(ShipType.Destroyer, player));
+        //ship.Add(SpawnSingleShip(ShipType.Frigate, player));
 
-        // because there has to be two 1x1 ships
-        for (int i = 0; i < 2; i++)
-        {
-            ship.Add(SpawnSingleShip(ShipType.Corvette, player));
-        }
+        //// because there has to be two 1x1 ships
+        //for (int i = 0; i < 2; i++)
+        //{
+        //    ship.Add(SpawnSingleShip(ShipType.Corvette, player));
+        //}
 
     }
 
@@ -172,6 +173,8 @@ public class PlayerBoard : MonoBehaviour
                 // if no tiles are occupied then remove them from placement tile list -- this represent occupation of tiles
                 if (removeTile == ship[i].Width)
                 {
+                    affectedTiles = ship[i].GetAffectedTiles(usedTiles[0].x, usedTiles[0].y, orientation);
+                    AddAfectedTilesToUsedTiles();
                     for (int x = 0; x < usedTiles.Count; x++)
                     {
                         for (int t = 0; t < placementTiles.Count; t++)
@@ -214,6 +217,14 @@ public class PlayerBoard : MonoBehaviour
                 ship[i].transform.position = tilePosition;
             }
 
+        }
+    }
+
+    private void AddAfectedTilesToUsedTiles()
+    {
+        for (int i = 0; i < affectedTiles.Count; i++)
+        {
+            usedTiles.Add(affectedTiles[i]);
         }
     }
 

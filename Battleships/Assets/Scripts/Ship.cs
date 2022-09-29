@@ -21,7 +21,7 @@ public class Ship : MonoBehaviour
 
     List<GameObject> touchTiles = new List<GameObject>();
 
-    public virtual List<Vector2Int> GetAffectedTiles(ref Ship[,] ship, int selectedx, int selectedy, int orientation)
+    public virtual List<Vector2Int> GetAffectedTiles(int selectedx, int selectedy, int orientation)
     {
         List<Vector2Int> returnValue = new List<Vector2Int>();
 
