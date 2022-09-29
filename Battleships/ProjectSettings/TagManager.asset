@@ -6,6 +6,15 @@ TagManager:
   tags:
   - Tile
   - Ship
+  - Affected
+  - Miss
+  - HitShip
+  - Battleship
+  - Cruiser
+  - Destroyer
+  - Frigate
+  - Corvette1
+  - Corvette2
   layers:
   - Default
   - TransparentFX
@@ -13,9 +22,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Tiles
+  - Hover
+  - Ship
   - 
   - 
   - 

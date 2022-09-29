@@ -19,7 +19,6 @@ public class Ship : MonoBehaviour
 
     public bool player;
 
-    List<GameObject> touchTiles = new List<GameObject>();
 
     public virtual List<Vector2Int> GetAffectedTiles(int selectedx, int selectedy, int orientation)
     {
@@ -27,4 +26,5 @@ public class Ship : MonoBehaviour
 
         return returnValue;
     }
+
 }

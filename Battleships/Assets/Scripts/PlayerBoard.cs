@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,11 +15,21 @@ public class PlayerBoard : MonoBehaviour
 
     // grid
     private GameObject[,] tiles;
+
     public List<Vector2Int> placementTiles = new List<Vector2Int>();
+    public List<Vector2Int> shipTiles = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByShips = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByBattleship = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByCruiser = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByDestroyer = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByFrigate = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByCorvette1 = new List<Vector2Int>();
+    public List<Vector2Int> tilesAffectedByCorvette2 = new List<Vector2Int>();
 
     [Header("Ships")]
     [SerializeField] private GameObject[] shipPrefabs;
-    private List<Ship> ship;
+    public List<Ship> ship;
+
     // placeholder for tiles that my be used
     private List<Vector2Int> usedTiles = new List<Vector2Int>();
     private List<Vector2Int> affectedTiles = new List<Vector2Int>();
@@ -34,7 +45,6 @@ public class PlayerBoard : MonoBehaviour
 
     private void Start()
     {
-        player = true;
         SpawnShips(player);
     }
 
@@ -62,18 +72,17 @@ public class PlayerBoard : MonoBehaviour
         ship = new List<Ship>();
 
         ship.Add(SpawnSingleShip(ShipType.Battleship, player));
-        //ship.Add(SpawnSingleShip(ShipType.Cruiser, player));
-        //ship.Add(SpawnSingleShip(ShipType.Destroyer, player));
-        //ship.Add(SpawnSingleShip(ShipType.Frigate, player));
+        ship.Add(SpawnSingleShip(ShipType.Cruiser, player));
+        ship.Add(SpawnSingleShip(ShipType.Destroyer, player));
+        ship.Add(SpawnSingleShip(ShipType.Frigate, player));
 
         //// because there has to be two 1x1 ships
-        //for (int i = 0; i < 2; i++)
-        //{
-        //    ship.Add(SpawnSingleShip(ShipType.Corvette, player));
-        //}
+        for (int i = 0; i < 2; i++)
+        {
+            ship.Add(SpawnSingleShip(ShipType.Corvette, player));
+        }
 
     }
-
     private Ship SpawnSingleShip(ShipType type, bool player)
     { 
         Ship shipPiece = Instantiate(shipPrefabs[(int)type - 1], transform).GetComponent<Ship>();
@@ -84,7 +93,7 @@ public class PlayerBoard : MonoBehaviour
         return shipPiece;
     }
 
-   // method for valid ship placement
+    // method for valid ship placement
     public void PositionShips()
     {
 
@@ -96,8 +105,8 @@ public class PlayerBoard : MonoBehaviour
             {
                 usedTiles.Clear();
 
-                int startRow = Random.Range(0, 9);
-                int startColumn = Random.Range(0, 9);
+                int startRow = placementTiles[Random.Range(0, placementTiles.Count)].x;
+                int startColumn = placementTiles[Random.Range(0, placementTiles.Count)].y;
                 int endRow = startRow;
                 int endColumn = startColumn;
                 int orientation = Random.Range(0, 3); // rotation of ship : 0 = 0; 1 = 90, 2 = 180, 3 = 270 
@@ -159,6 +168,10 @@ public class PlayerBoard : MonoBehaviour
                     continue;
                 }
 
+                // get all tiles that are affeceted by ship
+                affectedTiles = ship[i].GetAffectedTiles(usedTiles[0].x, usedTiles[0].y, orientation);
+                AddAfectedTilesToUsedTiles();
+
                 // check if specified tiles are occupied
                 for (int x = 0; x < usedTiles.Count; x++)
                 {
@@ -171,22 +184,28 @@ public class PlayerBoard : MonoBehaviour
                     }
                 }
                 // if no tiles are occupied then remove them from placement tile list -- this represent occupation of tiles
-                if (removeTile == ship[i].Width)
+                if (removeTile == usedTiles.Count)
                 {
-                    affectedTiles = ship[i].GetAffectedTiles(usedTiles[0].x, usedTiles[0].y, orientation);
-                    AddAfectedTilesToUsedTiles();
                     for (int x = 0; x < usedTiles.Count; x++)
                     {
                         for (int t = 0; t < placementTiles.Count; t++)
                         {
                             if (placementTiles[t].x == usedTiles[x].x && placementTiles[t].y == usedTiles[x].y)
                             {
-
                                 tiles[placementTiles[t].x, placementTiles[t].y].gameObject.SetActive(false);
                                 placementTiles.RemoveAt(t);
                             }
                         }
                     }
+
+                    SetShipTilesToShare(ship[i]);
+                    SetAffectedTilesToShare();
+                    SetSpecificShipAffectedTiles(ship[i]);
+                }
+                else
+                {
+                    tileSearch = true;
+                    continue;
                 }
                 tileSearch = false;
             }
@@ -238,6 +257,54 @@ public class PlayerBoard : MonoBehaviour
     private Vector3 GetPositionCenterForHorizontalRotation(Vector2Int firstTile, Vector2Int lastTile)
     {
         return new Vector3((tiles[firstTile.x, firstTile.y].transform.position.x + tiles[lastTile.x, lastTile.y].transform.position.x) / 2, 0, tiles[firstTile.x, firstTile.y].transform.position.z);
+    }
+
+    private void SetShipTilesToShare(Ship ship)
+    {
+        for (int t = 0; t < ship.Width; t++)
+        {
+            shipTiles.Add(usedTiles[t]);
+        }
+    }
+
+    private void SetAffectedTilesToShare()
+    {
+        for (int t = 0; t < affectedTiles.Count; t++)
+        {
+            tilesAffectedByShips.Add(affectedTiles[t]);
+        }
+    }
+
+    private void SetSpecificShipAffectedTiles(Ship ship)
+    {
+        if (ship.Name == "Battleship")
+        {
+            tilesAffectedByBattleship = affectedTiles;
+        }
+        else if (ship.Name == "Cruiser")
+        {
+            tilesAffectedByCruiser = affectedTiles;
+        }
+        else if (ship.Name == "Destroyer")
+        {
+            tilesAffectedByDestroyer = affectedTiles;
+        }
+        else if (ship.Name == "Frigate")
+        {
+            tilesAffectedByFrigate = affectedTiles;
+        }
+        else if (ship.Name == "Corvette")
+        {
+            if (tilesAffectedByCorvette1 != null)
+            {
+                tilesAffectedByCorvette2 = affectedTiles;
+            }
+            else
+            {
+                tilesAffectedByCorvette1 = affectedTiles;
+            }
+            
+        }
     }
 
 
