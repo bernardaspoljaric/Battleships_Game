@@ -140,11 +140,10 @@ public class BattleBoard : MonoBehaviour
                     tiles[hitPosition.x, hitPosition.y].gameObject.GetComponent<Renderer>().material = missMaterial;
                     playerBoard.ShowHitTiles(hitPosition.x, hitPosition.y);
 
-
                     ChangeToAnotherPlayer();
                 }
 
-                CheckWin();     
+                CheckWin();
             }
         }
     }
