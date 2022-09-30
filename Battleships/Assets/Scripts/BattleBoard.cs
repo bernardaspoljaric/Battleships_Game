@@ -37,19 +37,18 @@ public class BattleBoard : MonoBehaviour
     [SerializeField] private GameObject enemyBoard;
     [SerializeField] private GameObject battleBoard;
 
-    // scoring
+    [Header("Score")]
     private int score = 0;
-    public int battleship = 0;
-    public int cruiser = 0;
-    public int destroyer = 0;
-    public int frigate = 0;
-    public int corvette1 = 0;
-    public int corvette2 = 0;
+    private int battleship = 0;
+    private int cruiser = 0;
+    private int destroyer = 0;
+    private int frigate = 0;
+    private int corvette1 = 0;
+    private int corvette2 = 0;
 
     [Header("Other scripts")]
     [SerializeField] private PlayerBoard playerBoard;
     [SerializeField] private Ship ship;
-
 
     private void Awake()
     {
@@ -146,6 +145,7 @@ public class BattleBoard : MonoBehaviour
         }
     }
 
+    // method for generating tiles with certain padding
     private void GenerateBoard(int tileCountX, int tileCountY)
     {
         boardCenter = transform.position;
@@ -182,6 +182,7 @@ public class BattleBoard : MonoBehaviour
         return -Vector2Int.one;
     }
 
+    // method for getting all tiles that ships take and separating them to ships they belong to
     private void GetShipTiles()
     {
         for (int i = 0; i < tileCount_X; i++)
@@ -244,6 +245,7 @@ public class BattleBoard : MonoBehaviour
         }
     }
 
+    // method for getting all afected tiles by ships
     private void GetAffectedTiles()
     {
         for (int i = 0; i < tileCount_X; i++)
@@ -261,6 +263,7 @@ public class BattleBoard : MonoBehaviour
         }
     }
 
+    // method for checking which material should tile use
     private void CheckMaterial(int currentHoverX, int currentHoverY)
     {
         if (tiles[currentHover.x, currentHover.y].gameObject.tag == "HitShip")
@@ -277,6 +280,7 @@ public class BattleBoard : MonoBehaviour
         }
     }
 
+    // method for changing to another player
     private void ChangeToAnotherPlayer()
     {
         ownBoard.SetActive(false);
@@ -286,6 +290,7 @@ public class BattleBoard : MonoBehaviour
 
     }
 
+    // method for checking if player won
     private void CheckWin()
     {
         // if score is 16, last player who clicked won
@@ -295,56 +300,73 @@ public class BattleBoard : MonoBehaviour
         }
     }
 
+    // method for checking if whole ship has been hit so tiles affected by it can change material
     private void CheckIfWholeShipHasBeenHit()
     {
         if (battleship == playerBoard.ship[0].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByBattleship.Count; i++)
             {
-                tiles[playerBoard.tilesAffectedByBattleship[i].x, playerBoard.tilesAffectedByBattleship[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByBattleship[i].x, playerBoard.tilesAffectedByBattleship[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial; 
+                if (tiles[playerBoard.tilesAffectedByBattleship[i].x, playerBoard.tilesAffectedByBattleship[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByBattleship[i].x, playerBoard.tilesAffectedByBattleship[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByBattleship[i].x, playerBoard.tilesAffectedByBattleship[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
         else if (cruiser == playerBoard.ship[1].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCruiser.Count; i++)
             {
-                tiles[playerBoard.tilesAffectedByCruiser[i].x, playerBoard.tilesAffectedByCruiser[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByCruiser[i].x, playerBoard.tilesAffectedByCruiser[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                if (tiles[playerBoard.tilesAffectedByCruiser[i].x, playerBoard.tilesAffectedByCruiser[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByCruiser[i].x, playerBoard.tilesAffectedByCruiser[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByCruiser[i].x, playerBoard.tilesAffectedByCruiser[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
         else if (destroyer == playerBoard.ship[2].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByDestroyer.Count; i++)
             {
-                tiles[playerBoard.tilesAffectedByDestroyer[i].x, playerBoard.tilesAffectedByDestroyer[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByDestroyer[i].x, playerBoard.tilesAffectedByDestroyer[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                if (tiles[playerBoard.tilesAffectedByDestroyer[i].x, playerBoard.tilesAffectedByDestroyer[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByDestroyer[i].x, playerBoard.tilesAffectedByDestroyer[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByDestroyer[i].x, playerBoard.tilesAffectedByDestroyer[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
         else if (frigate == playerBoard.ship[3].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByFrigate.Count; i++)
             {
-                tiles[playerBoard.tilesAffectedByFrigate[i].x, playerBoard.tilesAffectedByFrigate[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByFrigate[i].x, playerBoard.tilesAffectedByFrigate[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                if (tiles[playerBoard.tilesAffectedByFrigate[i].x, playerBoard.tilesAffectedByFrigate[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByFrigate[i].x, playerBoard.tilesAffectedByFrigate[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByFrigate[i].x, playerBoard.tilesAffectedByFrigate[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
-        else if (corvette1 == 1)
+        else if (corvette1 == playerBoard.ship[4].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCorvette1.Count; i++)
             {
-                Debug.Log(playerBoard.tilesAffectedByCorvette1[i].x + " " + playerBoard.tilesAffectedByCorvette1[i].y);
-                tiles[playerBoard.tilesAffectedByCorvette1[i].x, playerBoard.tilesAffectedByCorvette1[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByCorvette1[i].x, playerBoard.tilesAffectedByCorvette1[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                if (tiles[playerBoard.tilesAffectedByCorvette1[i].x, playerBoard.tilesAffectedByCorvette1[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByCorvette1[i].x, playerBoard.tilesAffectedByCorvette1[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByCorvette1[i].x, playerBoard.tilesAffectedByCorvette1[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
-        else if (corvette2 == 1)
+        else if (corvette2 == playerBoard.ship[5].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCorvette2.Count; i++)
             {
-                Debug.Log(playerBoard.tilesAffectedByCorvette2[i].x +" " + playerBoard.tilesAffectedByCorvette2[i].y);
-                tiles[playerBoard.tilesAffectedByCorvette2[i].x, playerBoard.tilesAffectedByCorvette2[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                tiles[playerBoard.tilesAffectedByCorvette2[i].x, playerBoard.tilesAffectedByCorvette2[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                if (tiles[playerBoard.tilesAffectedByCorvette2[i].x, playerBoard.tilesAffectedByCorvette2[i].y].gameObject.tag != "Miss")
+                {
+                    tiles[playerBoard.tilesAffectedByCorvette2[i].x, playerBoard.tilesAffectedByCorvette2[i].y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                    tiles[playerBoard.tilesAffectedByCorvette2[i].x, playerBoard.tilesAffectedByCorvette2[i].y].gameObject.GetComponent<Renderer>().material = noShipMaterial;
+                }
             }
         }
     }

@@ -38,6 +38,9 @@ public class PlayerBoard : MonoBehaviour
     [Header("Player")]
     public bool player; // true = player one, false = player two
 
+    [Header("Other scripts")]
+    [SerializeField] private UIManager UIManager;
+
     private void Awake()
     {
         GenerateBoard(tileCount_X, tileConut_Y);
@@ -45,7 +48,12 @@ public class PlayerBoard : MonoBehaviour
 
     private void Start()
     {
-        SpawnShips(player);
+        SpawnShips(player);    
+    }
+
+    private void Update()
+    {
+        UIManager.SetPlayerName(player);
     }
 
     // method for generation tiles on a grid which represent a game board

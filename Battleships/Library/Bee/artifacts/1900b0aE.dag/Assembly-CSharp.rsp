@@ -358,6 +358,7 @@
 "Assets/Scripts/Frigate.cs"
 "Assets/Scripts/PlayerBoard.cs"
 "Assets/Scripts/Ship.cs"
+"Assets/Scripts/UIManager.cs"
 "Assets/Water Float/Core/WaterFloat.cs"
 "Assets/Water Float/Demo/Standard Assets/Environment/Water/Water/Scripts/Displace.cs"
 "Assets/Water Float/Demo/Standard Assets/Environment/Water/Water/Scripts/GerstnerDisplace.cs"
