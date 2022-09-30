@@ -9,6 +9,8 @@ public class PlayerBoard : MonoBehaviour
     [SerializeField] private float padding = 11.2f;
     [SerializeField] private Vector3 boardCenter = Vector3.zero;
 
+    [SerializeField] private GameObject hitTilePrefab;
+
     // constannts - board size
     private const int tileCount_X = 10;
     private const int tileConut_Y = 10;
@@ -40,6 +42,7 @@ public class PlayerBoard : MonoBehaviour
 
     [Header("Other scripts")]
     [SerializeField] private UIManager UIManager;
+    [SerializeField] private BattleBoard battleBoard;
 
     private void Awake()
     {
@@ -267,6 +270,7 @@ public class PlayerBoard : MonoBehaviour
         return new Vector3((tiles[firstTile.x, firstTile.y].transform.position.x + tiles[lastTile.x, lastTile.y].transform.position.x) / 2, 0, tiles[firstTile.x, firstTile.y].transform.position.z);
     }
 
+    // method for making a list of all tiles used by all ships
     private void SetShipTilesToShare(Ship ship)
     {
         for (int t = 0; t < ship.Width; t++)
@@ -275,6 +279,7 @@ public class PlayerBoard : MonoBehaviour
         }
     }
 
+    // method for making a list of all tiles affected by all ships
     private void SetAffectedTilesToShare()
     {
         for (int t = 0; t < affectedTiles.Count; t++)
@@ -283,6 +288,7 @@ public class PlayerBoard : MonoBehaviour
         }
     }
 
+    // method for making a lists of all tiles affected by certain ship
     private void SetSpecificShipAffectedTiles(Ship ship)
     {
         if (ship.Name == "Battleship")
@@ -313,6 +319,13 @@ public class PlayerBoard : MonoBehaviour
             }
             
         }
+    }
+
+    public void ShowHitTiles(int hitX, int hitY)
+    {
+        Vector3 position = tiles[hitX, hitY].transform.position;
+        GameObject hitCube = Instantiate(hitTilePrefab, position, Quaternion.identity);
+        hitCube.transform.parent = gameObject.transform;
     }
 
 

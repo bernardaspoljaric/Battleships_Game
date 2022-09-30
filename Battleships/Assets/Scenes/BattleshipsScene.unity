@@ -929,6 +929,7 @@ MonoBehaviour:
   tileObject: {fileID: 4558195428573424247, guid: 9c5bb79c84a78d847a3dfeab916500ca, type: 3}
   padding: 11.2
   boardCenter: {x: 0, y: 2, z: 0}
+  hitTilePrefab: {fileID: 477561956405263639, guid: f3b78780b76a3ad42a2aabf8a0e3917a, type: 3}
   placementTiles: []
   shipTiles: []
   tilesAffectedByShips: []
@@ -947,6 +948,7 @@ MonoBehaviour:
   ship: []
   player: 0
   UIManager: {fileID: 421768778}
+  battleBoard: {fileID: 2043281628}
 --- !u!65 &160747234
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1284,6 +1286,7 @@ MonoBehaviour:
   battleBoard: {fileID: 2043281627}
   playerBoard: {fileID: 160747233}
   ship: {fileID: 0}
+  UIManager: {fileID: 421768778}
 --- !u!1 &328771783
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,6 +1959,8 @@ MonoBehaviour:
   playerTwoInputField: {fileID: 1397676088}
   startGameButton: {fileID: 1987144869}
   playerNameText: {fileID: 110581893}
+  winMenu: {fileID: 1414407420}
+  gameMenu: {fileID: 1420123534}
   winPlayerNameText: {fileID: 132549401}
 --- !u!1 &429476931
 GameObject:
@@ -5654,22 +5659,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2078507919}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1414407420}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 421768778}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: Reset
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6192,6 +6185,7 @@ MonoBehaviour:
   tileObject: {fileID: 4558195428573424247, guid: 9c5bb79c84a78d847a3dfeab916500ca, type: 3}
   padding: 11.2
   boardCenter: {x: 0, y: 2, z: 0}
+  hitTilePrefab: {fileID: 477561956405263639, guid: f3b78780b76a3ad42a2aabf8a0e3917a, type: 3}
   placementTiles: []
   shipTiles: []
   tilesAffectedByShips: []
@@ -6210,6 +6204,7 @@ MonoBehaviour:
   ship: []
   player: 1
   UIManager: {fileID: 421768778}
+  battleBoard: {fileID: 281030392}
 --- !u!65 &1687043553
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7156,6 +7151,7 @@ MonoBehaviour:
   battleBoard: {fileID: 281030385}
   playerBoard: {fileID: 1687043552}
   ship: {fileID: 0}
+  UIManager: {fileID: 421768778}
 --- !u!65 &2043281629
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7383,7 +7379,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103753262}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 119.223785, y: -148.91403, z: 50.2198}
+  m_LocalPosition: {x: 114.6, y: -169.05817, z: 60.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

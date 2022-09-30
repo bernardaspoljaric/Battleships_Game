@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class UIManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_InputField playerTwoInputField;
     [SerializeField] private Button startGameButton;
     [SerializeField] private TMP_Text playerNameText;
+    [SerializeField] private GameObject winMenu;
+    [SerializeField] private GameObject gameMenu;
     [SerializeField] private TMP_Text winPlayerNameText;
     private void Update()
     {
@@ -56,7 +59,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void SetWinName(bool player)
+    private void SetWinName(bool player)
     {
         if (player)
         {
@@ -66,6 +69,18 @@ public class UIManager : MonoBehaviour
         {
             winPlayerNameText.text = GetPlayerTwoName() + " " + "WINS";
         }
+    }
+
+    public void ShowWinMenu(bool player)
+    {
+        winMenu.SetActive(true);
+        gameMenu.SetActive(false);
+        SetWinName(player);
+    }
+
+    public void Reset()
+    {
+        SceneManager.LoadScene(0);
     }
     public void ExitGame()
     {

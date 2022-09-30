@@ -49,6 +49,7 @@ public class BattleBoard : MonoBehaviour
     [Header("Other scripts")]
     [SerializeField] private PlayerBoard playerBoard;
     [SerializeField] private Ship ship;
+    [SerializeField] private UIManager UIManager;
 
     private void Awake()
     {
@@ -128,7 +129,8 @@ public class BattleBoard : MonoBehaviour
                     tiles[hitPosition.x, hitPosition.y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                     tiles[hitPosition.x, hitPosition.y].gameObject.tag = "HitShip";
                     tiles[hitPosition.x, hitPosition.y].gameObject.GetComponent<Renderer>().material = shipMaterial;
-
+                    playerBoard.ShowHitTiles(hitPosition.x, hitPosition.y);
+                    
                     CheckIfWholeShipHasBeenHit();
                 }
                 else
@@ -136,6 +138,8 @@ public class BattleBoard : MonoBehaviour
                     tiles[hitPosition.x, hitPosition.y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                     tiles[hitPosition.x, hitPosition.y].gameObject.tag = "Miss";
                     tiles[hitPosition.x, hitPosition.y].gameObject.GetComponent<Renderer>().material = missMaterial;
+                    playerBoard.ShowHitTiles(hitPosition.x, hitPosition.y);
+
 
                     ChangeToAnotherPlayer();
                 }
@@ -296,7 +300,7 @@ public class BattleBoard : MonoBehaviour
         // if score is 16, last player who clicked won
         if (score == playerBoard.shipTiles.Count)
         {
-
+            UIManager.ShowWinMenu(player);
         }
     }
 
@@ -314,7 +318,7 @@ public class BattleBoard : MonoBehaviour
                 }
             }
         }
-        else if (cruiser == playerBoard.ship[1].Width)
+        if (cruiser == playerBoard.ship[1].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCruiser.Count; i++)
             {
@@ -325,7 +329,7 @@ public class BattleBoard : MonoBehaviour
                 }
             }
         }
-        else if (destroyer == playerBoard.ship[2].Width)
+        if (destroyer == playerBoard.ship[2].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByDestroyer.Count; i++)
             {
@@ -336,7 +340,7 @@ public class BattleBoard : MonoBehaviour
                 }
             }
         }
-        else if (frigate == playerBoard.ship[3].Width)
+        if (frigate == playerBoard.ship[3].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByFrigate.Count; i++)
             {
@@ -347,7 +351,7 @@ public class BattleBoard : MonoBehaviour
                 }
             }
         }
-        else if (corvette1 == playerBoard.ship[4].Width)
+        if (corvette1 == playerBoard.ship[4].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCorvette1.Count; i++)
             {
