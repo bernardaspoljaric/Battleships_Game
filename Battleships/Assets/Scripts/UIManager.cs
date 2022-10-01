@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_InputField playerOneInputField;
     [SerializeField] private TMP_InputField playerTwoInputField;
     [SerializeField] private Button startGameButton;
+    public Toggle recordToggle;
 
     [Header("Game menu")]
     [SerializeField] private GameObject gameMenu;
@@ -157,7 +158,6 @@ public class UIManager : MonoBehaviour
         viewGamesMenu.SetActive(false);
         viewGame.SetActive(true);
     }
-
 
     public void Reset()
     {

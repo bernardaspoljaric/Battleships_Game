@@ -203,7 +203,7 @@ public class PlayerBoard : MonoBehaviour
                         {
                             if (placementTiles[t].x == usedTiles[x].x && placementTiles[t].y == usedTiles[x].y)
                             {
-                                tiles[placementTiles[t].x, placementTiles[t].y].gameObject.SetActive(false);
+                                // for testing: tiles[placementTiles[t].x, placementTiles[t].y].gameObject.SetActive(false);
                                 placementTiles.RemoveAt(t);
                             }
                         }
@@ -309,18 +309,19 @@ public class PlayerBoard : MonoBehaviour
         }
         else if (ship.Name == "Corvette")
         {
-            if (tilesAffectedByCorvette1 != null)
+            if (tilesAffectedByCorvette1.Count == 0)
             {
-                tilesAffectedByCorvette2 = affectedTiles;
+                tilesAffectedByCorvette1 = affectedTiles;
             }
             else
             {
-                tilesAffectedByCorvette1 = affectedTiles;
+                tilesAffectedByCorvette2 = affectedTiles;
             }
             
         }
     }
 
+    // method for showing where other player hit
     public void ShowHitTiles(int hitX, int hitY)
     {
         Vector3 position = tiles[hitX, hitY].transform.position;

@@ -38,7 +38,7 @@ public class BattleBoard : MonoBehaviour
     [SerializeField] private GameObject battleBoard;
 
     [Header("Score")]
-    private int score = 0;
+    public int score = 0;
     private int battleship = 0;
     private int cruiser = 0;
     private int destroyer = 0;
@@ -361,7 +361,7 @@ public class BattleBoard : MonoBehaviour
                 }
             }
         }
-        else if (corvette2 == playerBoard.ship[5].Width)
+        if (corvette2 == playerBoard.ship[5].Width)
         {
             for (int i = 0; i < playerBoard.tilesAffectedByCorvette2.Count; i++)
             {

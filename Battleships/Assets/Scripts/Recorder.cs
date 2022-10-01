@@ -8,6 +8,8 @@ public class Recorder : MonoBehaviour
     private string folderPath;
     private int screenshotNumber;
 
+    [SerializeField] private UIManager UIManager;
+
     private void Start()
     {
         folderPath = Directory.GetCurrentDirectory() + "/Assets/Resources/" + PlayerPrefs.GetString("playerOne") + " VS. " + PlayerPrefs.GetString("playerTwo") + " " + System.DateTime.Now.ToString("dd/MM/yyyy") + "/";
@@ -32,5 +34,18 @@ public class Recorder : MonoBehaviour
         var screenshotName = "Screenshot_" + screenshotNumber + ".png";
         ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(folderPath, screenshotName));
         Debug.Log(folderPath + screenshotName);
+    }
+
+    // start recording if toggle is on
+    public void CheckIfShouldRecord()
+    {
+        if (UIManager.recordToggle.isOn)
+        {
+            this.gameObject.SetActive(true);
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 }
