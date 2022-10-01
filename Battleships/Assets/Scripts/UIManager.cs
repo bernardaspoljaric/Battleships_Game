@@ -6,39 +6,52 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.IO;
 
+
 public class UIManager : MonoBehaviour
 {
+    public string selectedFileName;
+
+    [Header("Setup menu")]
     [SerializeField] private TMP_InputField playerOneInputField;
     [SerializeField] private TMP_InputField playerTwoInputField;
     [SerializeField] private Button startGameButton;
-    [SerializeField] private TMP_Text playerNameText;
-    [SerializeField] private GameObject winMenu;
-    [SerializeField] private GameObject gameMenu;
-    [SerializeField] private TMP_Text winPlayerNameText;
-    [SerializeField] private GameObject scrollView;
-    [SerializeField] private RectTransform recordedGamePrefab;
-    [SerializeField] private RawImage slideshow;
 
-    private List<Image> screenshots = new List<Image>();
+    [Header("Game menu")]
+    [SerializeField] private GameObject gameMenu;
+    [SerializeField] private TMP_Text playerNameText;
+
+    [Header("View games menu")]
+    [SerializeField] private GameObject viewGamesMenu;
+    [SerializeField] private GameObject recordedGamePrefab;
+    [SerializeField] private GameObject scrollView;
+
+    [Header("Button position in View games menu")]
     private float padding = 200;
     private int fileNumber = 0;
     private Vector3 startingPoint = new Vector3(220, -220, 0);
 
-    public float t;
-    Texture2D files;
-    string pathPreFix = "file://";
-    Texture2D[] textureList;
+    [Header("View game")]
+    [SerializeField] private GameObject viewGame;
+    public TMP_InputField speedInputField;
+    public TMP_Text gameName;
+    public Button playButton;
+    public Button forwardButton;
+    public Button backwardButton;
+
+    [Header("Win menu")]
+    [SerializeField] private GameObject winMenu;
+    [SerializeField] private TMP_Text winPlayerNameText;
 
     private void Start()
     {
-        //ShowPlayedGames();
-        StartViewOfGame("me VS. you 30.09.2022");
+        ShowPlayedGames();
     }
     private void Update()
     {
         CheckIfInputFieldsAreFilled();
     }
 
+    // if all input fields are filled game can be started
     private void CheckIfInputFieldsAreFilled()
     {
         if (playerOneInputField.text != "" && playerTwoInputField.text != "")
@@ -51,22 +64,26 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // method for saving player names
     public void SavePlayersName()
     {
         PlayerPrefs.SetString("playerOne", playerOneInputField.text);
         PlayerPrefs.SetString("playerTwo", playerTwoInputField.text);
     }
 
+    // method for getting player1 name
     private string GetPlayerOneName()
     {
          return PlayerPrefs.GetString("playerOne");
     }
 
+    // method for getting player2 name
     private string GetPlayerTwoName()
     {
         return PlayerPrefs.GetString("playerTwo");
     }
 
+    // method for setting player name in game menu depending which player's turn is
     public void SetPlayerName(bool player)
     {
         if (player)
@@ -79,6 +96,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // method for setting wining player's name in win menu
     private void SetWinName(bool player)
     {
         if (player)
@@ -91,6 +109,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // method for showing win menu when game is over
     public void ShowWinMenu(bool player)
     {
         winMenu.SetActive(true);
@@ -98,7 +117,8 @@ public class UIManager : MonoBehaviour
         SetWinName(player);
     }
 
-    public void ShowPlayedGames()
+    // method for showing all played games
+    private void ShowPlayedGames()
     {
         string folderPath = Directory.GetCurrentDirectory() + "/Assets/Resources/";
         Vector3 position = startingPoint;
@@ -106,17 +126,19 @@ public class UIManager : MonoBehaviour
         Debug.Log(files[0]);
         foreach (string file in files)
         {
-            RectTransform game = Instantiate(recordedGamePrefab);
-            game.SetParent(scrollView.transform, false);
-            game.localPosition = position;
+            GameObject game = Instantiate(recordedGamePrefab);
+            game.GetComponent<RectTransform>().SetParent(scrollView.transform, false);
+            game.transform.localPosition = position;
+            
+
             string[] splitArray = file.Split(folderPath, System.StringSplitOptions.None);
             game.GetComponentInChildren<TextMeshProUGUI>().text = splitArray[1];
-            Debug.Log(fileNumber);
+            game.GetComponent<Button>().onClick.AddListener(delegate { Selection(game.GetComponentInChildren<TextMeshProUGUI>().text); });
 
             if (fileNumber < 3)
             {
                 fileNumber++;
-                position += new Vector3(startingPoint.x + padding, 0, 0);              
+                position += new Vector3(startingPoint.x + padding, 0, 0);
             }
             else
             {
@@ -128,48 +150,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void StartViewOfGame(string fileName)
+    // button action on click to start showing selected game
+    public void Selection(string fileName)
     {
-        string folderPath = Directory.GetCurrentDirectory() + "/Screenshots/" + fileName;
-        string path = @folderPath;
-        files = Resources.Load("me VS. you 30.09.2022/Screenshot_1") as Texture2D;
-        slideshow.GetComponent<RawImage>().texture = files;
-        //files = System.IO.Directory.GetFiles(path);
-        //Debug.Log(files[3]);
-        //StartCoroutine(LoadImages());
-    }
-
-    //public void Play()
-    //{
-    //    for (int i = 0; i < textureList.Length; i++)
-    //    {
-    //        Debug.Log(textureList[i]);
-    //        StartCoroutine(Display(t, textureList[i]));
-    //    }
-    //}
-
-    //private IEnumerator LoadImages()
-    //{
-    //    textureList = new Texture2D[files.Length];
-    //    int fileCount = 0;
-    //    foreach (string file in files)
-    //    {
-    //        string pathTemp = pathPreFix + file;
-    //        WWW www = new WWW(file);
-    //        yield return www;
-    //        Texture2D texTmp = new Texture2D(1024, 1024, TextureFormat.DXT1, false);
-    //        www.LoadImageIntoTexture(texTmp);
-
-    //        textureList[fileCount] = texTmp;
-    //        fileCount++;
-    //    }
-    //}
-
-    private IEnumerator Display(float seconds, Texture2D image)
-    {
-        Debug.Log("idee");
-        slideshow.GetComponent<Renderer>().material.mainTexture = image;
-        yield return new WaitForSeconds(seconds);
+        selectedFileName = fileName;
+        viewGamesMenu.SetActive(false);
+        viewGame.SetActive(true);
     }
 
 

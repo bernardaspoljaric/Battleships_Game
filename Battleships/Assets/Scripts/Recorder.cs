@@ -21,6 +21,8 @@ public class Recorder : MonoBehaviour
             TakeScreenshot();
         }
     }
+
+    // while playing game each click makes screenshot
     private void TakeScreenshot()
     {
         screenshotNumber++;
