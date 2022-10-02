@@ -33,22 +33,23 @@ public class PlayedGames : MonoBehaviour
         StartCoroutine(LoadImages(fileName, t));
     }
 
+    // go to next screenshot
     public void GoForward()
     {
-        Debug.Log("klik");
         StopAllCoroutines();
 
         StartCoroutine(LoadImages(UIManager.selectedFileName, t));
     }
 
+    // go to prewious screenshot
     public void GoBackward()
     {
-        Debug.Log("klik");
         StopAllCoroutines();
         screnshotNumber -= 2;
         StartCoroutine(LoadImages(UIManager.selectedFileName, t));
     }
 
+    // corutine for showing screenshots at certain speed
     private IEnumerator LoadImages(string fileName, float seconds)
     {
         for (int i = screnshotNumber; i < screenshots.Length; i++)

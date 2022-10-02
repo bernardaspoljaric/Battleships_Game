@@ -6,19 +6,15 @@ public class BattleBoard : MonoBehaviour
 {
     [Header("Battle board design")]
     [SerializeField] private GameObject tileObject;
-    [SerializeField] private float tileSize = 10;
     [SerializeField] private Vector3 boardCenter = Vector3.zero;
 
     // constannts - board size
     private const int tileCount_X = 10;
-    private const int tileConut_Y = 10;
-
-    private Vector3 bounds;
+    private const int tileCount_Y = 10;
 
     // grid
     private GameObject[,] tiles;
     private float padding = 11.2f;
-
 
     private Camera currentCamera;
     private Vector2Int currentHover;
@@ -54,7 +50,7 @@ public class BattleBoard : MonoBehaviour
 
     private void Awake()
     {
-        GenerateBoard(tileCount_X, tileConut_Y);
+        GenerateBoard(tileCount_X, tileCount_Y);
     }
 
     private void Start()
@@ -135,6 +131,7 @@ public class BattleBoard : MonoBehaviour
                     playerBoard.ShowHitTiles(hitPosition.x, hitPosition.y);
                     
                     CheckIfWholeShipHasBeenHit();
+                    CheckWin();
                 }
                 else
                 {
@@ -147,8 +144,6 @@ public class BattleBoard : MonoBehaviour
 
                     ChangeToAnotherPlayer();
                 }
-
-                CheckWin();
             }
         }
     }
@@ -157,7 +152,6 @@ public class BattleBoard : MonoBehaviour
     private void GenerateBoard(int tileCountX, int tileCountY)
     {
         boardCenter = transform.position;
-        bounds = new Vector3((tileCountX / 2) * tileSize, 0, (tileCountX / 2) * tileSize) + boardCenter;
 
         tiles = new GameObject[tileCountX, tileCountY];
 
@@ -177,7 +171,7 @@ public class BattleBoard : MonoBehaviour
     {
         for (int i = 0; i < tileCount_X; i++)
         {
-            for (int j = 0; j < tileConut_Y; j++)
+            for (int j = 0; j < tileCount_Y; j++)
             {
                 if (tiles[i, j] == hitInfo)
                 {
@@ -195,7 +189,7 @@ public class BattleBoard : MonoBehaviour
     {
         for (int i = 0; i < tileCount_X; i++)
         {
-            for (int j = 0; j < tileConut_Y; j++)
+            for (int j = 0; j < tileCount_Y; j++)
             {
                 for (int k = 0; k < playerBoard.shipTiles.Count; k++)
                 {
@@ -258,7 +252,7 @@ public class BattleBoard : MonoBehaviour
     {
         for (int i = 0; i < tileCount_X; i++)
         {
-            for (int j = 0; j < tileConut_Y; j++)
+            for (int j = 0; j < tileCount_Y; j++)
             {
                 for (int k = 0; k < playerBoard.tilesAffectedByShips.Count; k++)
                 {
@@ -304,6 +298,13 @@ public class BattleBoard : MonoBehaviour
         // if score is 16, last player who clicked won
         if (score == playerBoard.shipTiles.Count)
         {
+            for (int i = 0; i < tileCount_X; i++)
+            {
+                for (int j = 0; j < tileCount_Y; j++)
+                {
+                    tiles[i, j].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                }
+            }
             UIManager.ShowWinMenu(player);
             audioManager.PlayThemeAudio();
         }

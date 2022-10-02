@@ -18,15 +18,17 @@ public class PlayerBoard : MonoBehaviour
     // grid
     private GameObject[,] tiles;
 
-    public List<Vector2Int> placementTiles = new List<Vector2Int>();
-    public List<Vector2Int> shipTiles = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByShips = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByBattleship = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByCruiser = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByDestroyer = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByFrigate = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByCorvette1 = new List<Vector2Int>();
-    public List<Vector2Int> tilesAffectedByCorvette2 = new List<Vector2Int>();
+    public List<Vector2Int> placementTiles = new List<Vector2Int>(); // tiles on which ship can be placed
+    private List<Vector2Int> resetTiles = new List<Vector2Int>(); // tiles for reseting placement tiles
+    public List<Vector2Int> shipTiles = new List<Vector2Int>(); // tiles on which is ship
+    public List<Vector2Int> tilesAffectedByShips = new List<Vector2Int>(); // all tiles that are affected by ships
+
+    public List<Vector2Int> tilesAffectedByBattleship = new List<Vector2Int>(); // all tiles that are affected by battleship
+    public List<Vector2Int> tilesAffectedByCruiser = new List<Vector2Int>(); // all tiles that are affected by Cruiser
+    public List<Vector2Int> tilesAffectedByDestroyer = new List<Vector2Int>(); // all tiles that are affected by Destroyer
+    public List<Vector2Int> tilesAffectedByFrigate = new List<Vector2Int>(); // all tiles that are affected by Frigate
+    public List<Vector2Int> tilesAffectedByCorvette1 = new List<Vector2Int>(); // all tiles that are affected by first Corvette
+    public List<Vector2Int> tilesAffectedByCorvette2 = new List<Vector2Int>(); // all tiles that are affected by second Corvette
 
     [Header("Ships")]
     [SerializeField] private GameObject[] shipPrefabs;
@@ -35,7 +37,9 @@ public class PlayerBoard : MonoBehaviour
     // placeholder for tiles that my be used
     private List<Vector2Int> usedTiles = new List<Vector2Int>();
     private List<Vector2Int> affectedTiles = new List<Vector2Int>();
+
     private Vector3 rotation = Vector3.zero;
+    private int whileLoopTurn = 0;
 
     [Header("Player")]
     public bool player; // true = player one, false = player two
@@ -74,10 +78,12 @@ public class PlayerBoard : MonoBehaviour
                 tiles[i,j] = Instantiate(tileObject,  pos, Quaternion.identity);
                 tiles[i,j].transform.parent = gameObject.transform;
                 placementTiles.Add(new Vector2Int(i,j));
+                resetTiles.Add(new Vector2Int(i, j));
             }
         }
     }
 
+    // method for spawning ships
     public void SpawnShips(bool player)
     {
         ship = new List<Ship>();
@@ -85,7 +91,7 @@ public class PlayerBoard : MonoBehaviour
         ship.Add(SpawnSingleShip(ShipType.Battleship, player));
         ship.Add(SpawnSingleShip(ShipType.Cruiser, player));
         ship.Add(SpawnSingleShip(ShipType.Destroyer, player));
-        ship.Add(SpawnSingleShip(ShipType.Frigate, player));
+        ship.Add(SpawnSingleShip(ShipType.Frigate, player));;
 
         //// because there has to be two 1x1 ships
         for (int i = 0; i < 2; i++)
@@ -94,8 +100,10 @@ public class PlayerBoard : MonoBehaviour
         }
 
     }
+    
+    // create single ship
     private Ship SpawnSingleShip(ShipType type, bool player)
-    { 
+    {
         Ship shipPiece = Instantiate(shipPrefabs[(int)type - 1], transform).GetComponent<Ship>();
 
         shipPiece.ShipType = type;
@@ -107,14 +115,23 @@ public class PlayerBoard : MonoBehaviour
     // method for valid ship placement
     public void PositionShips()
     {
-
+        Debug.Log("POSTAVLJA");
         for (int i = 0; i < ship.Count; i++)
         {
+            whileLoopTurn = 0;
             bool tileSearch = true;
             Debug.Log(ship[i].Name);
+
             while (tileSearch)
             {
-                usedTiles.Clear();
+                usedTiles = new List<Vector2Int>();
+
+                if (whileLoopTurn == placementTiles.Count)
+                {
+                    tileSearch = false;
+                    ResetLists();
+                    PositionShips();
+                }
 
                 int startRow = placementTiles[Random.Range(0, placementTiles.Count)].x;
                 int startColumn = placementTiles[Random.Range(0, placementTiles.Count)].y;
@@ -127,7 +144,7 @@ public class PlayerBoard : MonoBehaviour
                 int removeTile = 0;
 
                 // foreach orientation get tiles that will be used
-                // 0
+                //0
                 if (orientation == 0)
                 {
                     for (int w = 1; w <= ship[i].Width; w++)
@@ -167,7 +184,6 @@ public class PlayerBoard : MonoBehaviour
                     {
                         usedTiles.Add(new Vector2Int(startRow, endColumn));
                         endColumn++;
-
                     }
                     rotation = new Vector3(0, 270, 0);
                 }
@@ -175,6 +191,8 @@ public class PlayerBoard : MonoBehaviour
                 // cannot place ships beyond the boundaries of the board
                 if (endRow > 9 || endColumn > 9 || endColumn < 0 || endRow < 0)
                 {
+                    Debug.Log("VANI");
+                    whileLoopTurn++;
                     tileSearch = true;
                     continue;
                 }
@@ -203,7 +221,7 @@ public class PlayerBoard : MonoBehaviour
                         {
                             if (placementTiles[t].x == usedTiles[x].x && placementTiles[t].y == usedTiles[x].y)
                             {
-                                // for testing: tiles[placementTiles[t].x, placementTiles[t].y].gameObject.SetActive(false);
+                                // testing: tiles[placementTiles[t].x, placementTiles[t].y].gameObject.SetActive(false);
                                 placementTiles.RemoveAt(t);
                             }
                         }
@@ -215,41 +233,22 @@ public class PlayerBoard : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("ZAUZETO");
+                    whileLoopTurn++;
                     tileSearch = true;
                     continue;
                 }
+
                 tileSearch = false;
+                
             }
 
             // check which rotation does ship have for rightful placement
-            if (rotation.y == 0)
-            {
-                Vector3 tilePosition = GetPositionCenterForVerticalRotation(usedTiles[0], usedTiles[ship[i].Width - 1]);
-                ship[i].transform.Rotate(rotation);
-                ship[i].transform.position = tilePosition;
-            }
-            else if (rotation.y == 90)
-            {
-                Vector3 tilePosition = GetPositionCenterForHorizontalRotation(usedTiles[0], usedTiles[ship[i].Width - 1]);
-                ship[i].transform.Rotate(rotation);
-                ship[i].transform.position = tilePosition;
-            }
-            else if (rotation.y == 180)
-            {
-                Vector3 tilePosition = GetPositionCenterForVerticalRotation(usedTiles[0], usedTiles[ship[i].Width - 1]);
-                ship[i].transform.Rotate(rotation);
-                ship[i].transform.position = tilePosition;
-            }
-            else if (rotation.y == 270)
-            {
-                Vector3 tilePosition = GetPositionCenterForHorizontalRotation(usedTiles[0], usedTiles[ship[i].Width - 1]);
-                ship[i].transform.Rotate(rotation);
-                ship[i].transform.position = tilePosition;
-            }
-
+            PlaceShip(rotation, ship[i]);
         }
     }
 
+    // method for adding affected tiles of ship to used tiles
     private void AddAfectedTilesToUsedTiles()
     {
         for (int i = 0; i < affectedTiles.Count; i++)
@@ -319,6 +318,52 @@ public class PlayerBoard : MonoBehaviour
             }
             
         }
+    }
+
+    // method for placing ship with rightful rotation
+    private void PlaceShip(Vector3 rotation, Ship ship)
+    {
+        if (rotation.y == 0)
+        {
+            Vector3 tilePosition = GetPositionCenterForVerticalRotation(usedTiles[0], usedTiles[ship.Width - 1]);
+            ship.transform.Rotate(rotation);
+            ship.transform.position = tilePosition;
+        }
+        else if (rotation.y == 90)
+        {
+            Vector3 tilePosition = GetPositionCenterForHorizontalRotation(usedTiles[0], usedTiles[ship.Width - 1]);
+            ship.transform.Rotate(rotation);
+            ship.transform.position = tilePosition;
+        }
+        else if (rotation.y == 180)
+        {
+            Vector3 tilePosition = GetPositionCenterForVerticalRotation(usedTiles[0], usedTiles[ship.Width - 1]);
+            ship.transform.Rotate(rotation);
+            ship.transform.position = tilePosition;
+        }
+        else if (rotation.y == 270)
+        {
+            Vector3 tilePosition = GetPositionCenterForHorizontalRotation(usedTiles[0], usedTiles[ship.Width - 1]);
+            ship.transform.Rotate(rotation);
+            ship.transform.position = tilePosition;
+        }
+    }
+
+    // method for reseting all lists conected to ship placement
+    private void ResetLists()
+    {
+        usedTiles = new List<Vector2Int>();
+        placementTiles = new List<Vector2Int>();
+        placementTiles = resetTiles;
+        affectedTiles = new List<Vector2Int>();
+        shipTiles = new List<Vector2Int>();
+        tilesAffectedByShips = new List<Vector2Int>();
+        tilesAffectedByBattleship = new List<Vector2Int>();
+        tilesAffectedByCruiser = new List<Vector2Int>();
+        tilesAffectedByDestroyer = new List<Vector2Int>();
+        tilesAffectedByFrigate = new List<Vector2Int>();
+        tilesAffectedByCorvette1 = new List<Vector2Int>();
+        tilesAffectedByCorvette2 = new List<Vector2Int>();
     }
 
     // method for showing where other player hit

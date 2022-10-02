@@ -11,6 +11,10 @@ public class UIManager : MonoBehaviour
 {
     public string selectedFileName;
 
+    [Header("Settings menu")]
+    public Slider musicSlider;
+    public Slider effectsSlider;
+
     [Header("Setup menu")]
     [SerializeField] private TMP_InputField playerOneInputField;
     [SerializeField] private TMP_InputField playerTwoInputField;
@@ -47,7 +51,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        ShowPlayedGames();
+        
     }
     private void Update()
     {
@@ -121,7 +125,7 @@ public class UIManager : MonoBehaviour
     }
 
     // method for showing all played games
-    private void ShowPlayedGames()
+    public void ShowPlayedGames()
     {
         string folderPath = Directory.GetCurrentDirectory() + "/Assets/Resources/";
         Vector3 position = startingPoint;
