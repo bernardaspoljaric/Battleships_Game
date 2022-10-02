@@ -43,6 +43,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject winMenu;
     [SerializeField] private TMP_Text winPlayerNameText;
 
+    [SerializeField] private AudioManager audioManager;
+
     private void Start()
     {
         ShowPlayedGames();
@@ -135,6 +137,7 @@ public class UIManager : MonoBehaviour
             string[] splitArray = file.Split(folderPath, System.StringSplitOptions.None);
             game.GetComponentInChildren<TextMeshProUGUI>().text = splitArray[1];
             game.GetComponent<Button>().onClick.AddListener(delegate { Selection(game.GetComponentInChildren<TextMeshProUGUI>().text); });
+            game.GetComponent<Button>().onClick.AddListener(delegate { audioManager.PlayClickAudio(); });
 
             if (fileNumber < 3)
             {

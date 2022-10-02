@@ -50,6 +50,7 @@ public class BattleBoard : MonoBehaviour
     [SerializeField] private PlayerBoard playerBoard;
     [SerializeField] private Ship ship;
     [SerializeField] private UIManager UIManager;
+    [SerializeField] private AudioManager audioManager;
 
     private void Awake()
     {
@@ -126,6 +127,8 @@ public class BattleBoard : MonoBehaviour
                         score++;
                     }
 
+                    audioManager.PlayHitAudio();
+
                     tiles[hitPosition.x, hitPosition.y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                     tiles[hitPosition.x, hitPosition.y].gameObject.tag = "HitShip";
                     tiles[hitPosition.x, hitPosition.y].gameObject.GetComponent<Renderer>().material = shipMaterial;
@@ -135,6 +138,8 @@ public class BattleBoard : MonoBehaviour
                 }
                 else
                 {
+                    audioManager.PlayMissAudio();
+
                     tiles[hitPosition.x, hitPosition.y].gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                     tiles[hitPosition.x, hitPosition.y].gameObject.tag = "Miss";
                     tiles[hitPosition.x, hitPosition.y].gameObject.GetComponent<Renderer>().material = missMaterial;
@@ -300,6 +305,7 @@ public class BattleBoard : MonoBehaviour
         if (score == playerBoard.shipTiles.Count)
         {
             UIManager.ShowWinMenu(player);
+            audioManager.PlayThemeAudio();
         }
     }
 
